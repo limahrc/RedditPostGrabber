@@ -2,6 +2,11 @@ package com.example.redditpostgrabber
 
 import com.google.gson.annotations.SerializedName
 
+/*
+ * Classes modelo para armazenamento dos dados obtidos via JSON.
+ */
+
+
 data class Base (
     @SerializedName("data") val data : Data
 )

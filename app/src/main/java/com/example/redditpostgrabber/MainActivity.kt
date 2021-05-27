@@ -14,7 +14,8 @@ class MainActivity : AppCompatActivity() {
 
         val getTopicsButton = findViewById<Button>(R.id.button)
 
-        getTopicsButton.setOnClickListener { // ações tomadas ao clique do botão
+        // ações tomadas ao clique do botão
+        getTopicsButton.setOnClickListener {
 
                 // lançamento da nova tela
                 startActivity(

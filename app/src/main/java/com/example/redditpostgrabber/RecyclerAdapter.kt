@@ -28,7 +28,7 @@ class RecyclerAdapter(private val topicList: List<Topic>) :
     // exibição das informações nos elementos da lista
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.title.text = topicList[position].title
-        holder.subtitle.text = topicList[position].author
+        holder.subtitle.text = "by ${topicList[position].author}"
     }
 
     override fun getItemCount(): Int {

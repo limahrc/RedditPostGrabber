@@ -33,7 +33,9 @@ class TopicsActivity : AppCompatActivity() {
 
     }
 
-
+    /*
+     * Requisita via HTTP os dados na API e realiza o parsing para objetos Kotlin
+     */
     private fun retrieveJsonData(recyclerView: RecyclerView, progressBar: ProgressBar) {
         val url = "https://www.reddit.com/r/androiddev.json?raw_json=1"
         val request = Request.Builder().url(url).build()
@@ -63,6 +65,7 @@ class TopicsActivity : AppCompatActivity() {
                     )
                     Log.i("Topic title", i.topic.title)
                 }
+
                 // atualiza o adapter do recyclerview na thread principal
                 runOnUiThread {
                     progressBar.visibility = View.GONE
