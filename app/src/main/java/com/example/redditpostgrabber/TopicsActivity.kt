@@ -1,5 +1,6 @@
 package com.example.redditpostgrabber
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,14 +12,14 @@ import com.google.gson.GsonBuilder
 import okhttp3.*
 import java.io.IOException
 
-class TopicsActivity : AppCompatActivity() {
+class TopicsActivity : AppCompatActivity(), RecyclerViewClickInterface {
     var list: ArrayList<Topic> = ArrayList()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_topics)
-        setTitle(R.string.topics_activity_title)
+        setTitle(R.string.subreddit_name)
 
         val recyclerView: RecyclerView = findViewById(R.id.topis_reciclerview)
         val progressBar: ProgressBar = findViewById(R.id.indeterminateBar)
@@ -60,7 +61,8 @@ class TopicsActivity : AppCompatActivity() {
                     list.add(  // salvando infos do tópico na lista
                         Topic(
                             i.topic.title,
-                            i.topic.author
+                            i.topic.author,
+                            i.topic.body
                         )
                     )
                     Log.i("Topic title", i.topic.title)
@@ -69,10 +71,15 @@ class TopicsActivity : AppCompatActivity() {
                 // atualiza o adapter do recyclerview na thread principal
                 runOnUiThread {
                     progressBar.visibility = View.GONE
-                    recyclerView.adapter = RecyclerAdapter(list)
+                    recyclerView.adapter = RecyclerAdapter(list, this@TopicsActivity)
                 }
             }
         })
     }
 
+    // lança a tela do post completo
+    override fun onClick(position: Int) {
+        startActivity(Intent(this, FullTopicActivity::class.java)
+            .putExtra("topic", list[position]))
+    }
 }

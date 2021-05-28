@@ -11,6 +11,7 @@
         android:roundIcon="@drawable/reddit_orange_64px"
         android:supportsRtl="true"
         android:theme="@style/Theme.RedditPostGrabber">
+        <activity android:name=".FullTopicActivity"></activity>
         <activity android:name=".TopicsActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

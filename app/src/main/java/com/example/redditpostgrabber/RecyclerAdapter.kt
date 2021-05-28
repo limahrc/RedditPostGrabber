@@ -7,16 +7,25 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerAdapter(private val topicList: List<Topic>) :
-    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+class RecyclerAdapter(
+    private val topicList: List<Topic>,
+    private val recyclerViewClickInterface: RecyclerViewClickInterface
+) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     private var counter = 0  //contador de views criadas
 
     // recuperação de elementos gráficos do layout
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+   inner class ViewHolder(private val itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.topic_title_text)
         val subtitle: TextView = itemView.findViewById(R.id.topic_sub_text)
-    }
+
+        init {
+            itemView.setOnClickListener {
+                    recyclerViewClickInterface.onClick(adapterPosition)
+                }
+            }
+        }
+
 
     // inflagem dos elementos gráficos e atribuição de lógica
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
