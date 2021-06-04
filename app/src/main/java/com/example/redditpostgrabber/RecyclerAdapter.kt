@@ -12,8 +12,6 @@ class RecyclerAdapter(
     private val recyclerViewClickInterface: RecyclerViewClickInterface
 ) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
-    private var counter = 0  //contador de views criadas
-
     // recuperação de elementos gráficos do layout
    inner class ViewHolder(private val itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.topic_title_text)
@@ -30,7 +28,6 @@ class RecyclerAdapter(
     // inflagem dos elementos gráficos e atribuição de lógica
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        Log.i("RecyclerAdapter","Views Criadas: ${counter++}")
         return ViewHolder(inflater.inflate(R.layout.row_item, parent, false))
     }
 

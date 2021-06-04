@@ -1,6 +1,8 @@
 package com.example.redditpostgrabber
 
 import com.google.gson.annotations.SerializedName
+import retrofit2.Call
+import retrofit2.http.GET
 import java.io.Serializable
 
 /*
@@ -9,11 +11,11 @@ import java.io.Serializable
 
 
 data class Base (
-    @SerializedName("data") val data : Data
+    val data : Data
 )
 
 data class Data (
-    @SerializedName("children") val children : List<Children>,
+    val children : List<Children>,
 )
 
 data class Children (
@@ -21,11 +23,16 @@ data class Children (
 )
 
 data class Topic (
-    @SerializedName("title") val title: String,
+    val title: String,
     @SerializedName("author_fullname") val author: String,
     @SerializedName("selftext") val body: String
 ) : Serializable
 
 interface RecyclerViewClickInterface {
     fun onClick(position: Int)
+}
+
+interface APIService {
+    @GET("/r/androiddev.json?raw_json=1")
+    fun getTopic() : Call<Base>
 }

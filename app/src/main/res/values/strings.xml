@@ -3,4 +3,5 @@
     <string name="get_topics_button_name">Get Topics</string>
     <string name="subreddit_name">r/androiddev</string>
     <string name="element_text">Topic Title</string>
+    <string name="button_text">Click here to retrieve recent topics</string>
 </resources>

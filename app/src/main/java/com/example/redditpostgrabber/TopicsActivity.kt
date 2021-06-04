@@ -8,21 +8,27 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.GsonBuilder
-import okhttp3.*
-import java.io.IOException
+import com.example.redditpostgrabber.databinding.ActivityTopicsBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
 
 class TopicsActivity : AppCompatActivity(), RecyclerViewClickInterface {
+    private lateinit var binding: ActivityTopicsBinding
     var list: ArrayList<Topic> = ArrayList()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_topics)
+        binding = ActivityTopicsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setTitle(R.string.subreddit_name)
 
-        val recyclerView: RecyclerView = findViewById(R.id.topis_reciclerview)
-        val progressBar: ProgressBar = findViewById(R.id.indeterminateBar)
+        val recyclerView = binding.topisReciclerview
+        val progressBar = binding.indeterminateBar
 
         // configuração do recyclerview
         recyclerView.addItemDecoration(DividerItemDecoration(this,
@@ -38,43 +44,44 @@ class TopicsActivity : AppCompatActivity(), RecyclerViewClickInterface {
      * Requisita via HTTP os dados na API e realiza o parsing para objetos Kotlin
      */
     private fun retrieveJsonData(recyclerView: RecyclerView, progressBar: ProgressBar) {
-        val url = "https://www.reddit.com/r/androiddev.json?raw_json=1"
-        val request = Request.Builder().url(url).build()
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(object: Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("JSON Data Retrieve", e.toString())
-            }
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.reddit.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
-            // parsing dos dados da api para o kotlin
-            override fun onResponse(call: Call, response: Response) {
+        val service = retrofit.create(APIService::class.java)
 
-                runOnUiThread {
-                    progressBar.visibility = View.VISIBLE
-                }
+        val call = service.getTopic()
+        progressBar.visibility = View.VISIBLE
 
-                val body = response.body!!.string()
-                val json = GsonBuilder().create()
-                    .fromJson(body, Base::class.java)
-                val apiChildrenArray = json.data.children
-                for  (i in apiChildrenArray) {
-                    list.add(  // salvando infos do tópico na lista
-                        Topic(
-                            i.topic.title,
-                            i.topic.author,
-                            i.topic.body
-                        )
-                    )
-                    Log.i("Topic title", i.topic.title)
-                }
+        call.enqueue(object : Callback<Base> {
 
-                // atualiza o adapter do recyclerview na thread principal
-                runOnUiThread {
+            override fun onResponse(call: Call<Base>, response: Response<Base>) {
+                if (response.isSuccessful) {
                     progressBar.visibility = View.GONE
-                    recyclerView.adapter = RecyclerAdapter(list, this@TopicsActivity)
+                    response.body()?.data?.children?.forEach { i ->
+                        list.add(
+                            Topic(
+                                i.topic.title,
+                                i.topic.author,
+                                i.topic.body
+                            )
+                        )
+                    }
+                    recyclerView.adapter = RecyclerAdapter(
+                        list,
+                        this@TopicsActivity
+                    )
                 }
             }
+
+            override fun onFailure(call: Call<Base>, t: Throwable) {
+                progressBar.visibility = View.GONE
+                Log.e("Response Error", t.message.toString())
+            }
+
         })
+
     }
 
     // lança a tela do post completo
